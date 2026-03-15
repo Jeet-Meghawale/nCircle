@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 import routes from "./routes";
 import { errorHandler } from "./middlewares/error.middleware";
@@ -15,6 +16,9 @@ app.use(cors());
 
 // JSON parser
 app.use(express.json());
+
+// cookie
+app.use(cookieParser());
 
 // Health check
 app.get("/health", (req, res) => {

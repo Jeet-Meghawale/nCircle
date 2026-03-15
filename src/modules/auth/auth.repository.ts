@@ -35,9 +35,9 @@ export const authRepository = {
     });
   },
 
-  async revokeRefreshToken(token: string) {
+  async revokeRefreshToken(userId: string) {
     return prisma.refreshToken.update({
-      where: { token },
+      where: { userId },
       data: {
         revoked: true,
       },
@@ -67,4 +67,9 @@ export const authRepository = {
       where: { userId }
     })
   },
+  async findUserById(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId }
+  });
+},
 }
