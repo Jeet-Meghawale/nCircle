@@ -1,27 +1,33 @@
-import express from "express"
-import cors from "cors"
-import helmet from "helmet"
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
 
-const app = express()
+import routes from "./routes";
+import { errorHandler } from "./middlewares/error.middleware";
+
+const app = express();
 
 // Security middleware
-app.use(helmet())
+app.use(helmet());
 
 // CORS
-app.use(cors())
+app.use(cors());
 
-// Parse JSON body
-app.use(express.json())
+// JSON parser
+app.use(express.json());
 
-// Health check route
+// Health check
 app.get("/health", (req, res) => {
   res.status(200).json({
     status: "ok",
-    message: "Server running"
-  })
-})
+    message: "Server running",
+  });
+});
 
-// Auth routes
-import authRoutes from "../src/modules/auth/auth.routes"
-app.use("/auth", authRoutes)
-export default app
+// API routes
+app.use("/", routes);
+
+// Global error handler
+app.use(errorHandler);
+
+export default app;

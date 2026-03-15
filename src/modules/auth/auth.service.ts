@@ -1,8 +1,10 @@
 import { authRepository } from "./auth.repository"
 import { RegisterUserInput } from "./auth.types"
 import { registerSchema, RegisterInput } from "../../validators/auth.validator"
-import { hashPassword } from "../../utils/password.util"
+import { comparePassword, hashPassword } from "../../utils/password.util"
 import { Role } from"@prisma/client"
+import { ApiError } from "../../utils/api.error"
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.util"
 
 
 export const authService = {
@@ -38,5 +40,45 @@ export const authService = {
     // Remove password from res
     const {password , ...safeUser} = user
     return safeUser
-  }
+  },
+
+  async login(email: string , password:string){
+    const user = await authRepository.findUserByEmail(email);
+
+    if(!user){
+      throw new ApiError(401,"Invalid credentials");
+    }
+
+    const isPasswordValid= await comparePassword(
+      password,
+      user.password
+    )
+    if(!isPasswordValid){
+      throw new ApiError(401,"Invalid credentials");  
+    }
+    const accessToken=generateAccessToken(user.id);
+    const refreshToken=generateRefreshToken(user.id);
+
+    const expiresAt=new Date();
+    expiresAt.setDate(expiresAt.getDate()+7);
+
+    const exist=await authRepository.findExistingToken(user.id);
+    if(exist != null)
+    await authRepository.updateRefreshToken(user.id,refreshToken);
+    else 
+    await authRepository.saveRefreshToken(
+      refreshToken,
+      user.id,
+      expiresAt
+    );
+    const {password:_ , ...safeUser} = user;
+
+    return{
+      safeUser,
+      accessToken,
+      refreshToken
+    };
+  },
+
+  
 }
