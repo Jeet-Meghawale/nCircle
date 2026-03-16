@@ -2,6 +2,8 @@ import { Router } from "express";
 import { authController } from "./auth.controller";
 import { asyncHandler } from "../../utils/async.handler";
 import { authMiddleware } from "../../middlewares/auth.middleware";
+import { authorize } from "../../middlewares/rbac.middleware";
+import { Role } from "@prisma/client";
 
 
 const router = Router();
@@ -9,6 +11,7 @@ const router = Router();
 // Post /auth/register
 router.post(
     "/register",
+    authorize(Role.ADMIN),
     asyncHandler(authController.registerController)
 )
 
@@ -36,5 +39,8 @@ router.post(
   "/logout",
   asyncHandler(authController.logoutController)
 );
+
+//Register bulk
+
 
 export default router;

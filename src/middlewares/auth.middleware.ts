@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyAccessToken } from "../utils/jwt.util";
 import { ApiError } from "../utils/api.error";
+import { prisma } from "../database/client";
 
 
-export const authMiddleware=(
+export const authMiddleware=async (
     req: Request,
     res: Response,
     next: NextFunction
@@ -20,6 +21,11 @@ export const authMiddleware=(
     try{
         const decoded=verifyAccessToken(token ) as {userId:string};
         req.userId = decoded.userId;
+        let user= await prisma.user.findUnique({
+            where : {id:decoded.userId},
+            select : { role : true} 
+        })
+        req.role=user!.role;
         next();
     }
     catch(err){

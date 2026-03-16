@@ -114,7 +114,7 @@ model Project {
   createdBy String
   creator   User   @relation("ProjectCreator", fields: [createdBy], references: [id])
 
-  visibility ProjectVisibility
+  visibility ProjectVisibility @default(LISTED)
   isActive   Boolean           @default(true)
 
   statusRemark String?
