@@ -74,7 +74,7 @@ model User {
 
   ledApplications ProjectApplication[] @relation("ApplicationLeader")
 
-  verifiedApplications ProjectApplication[] @relation("ApplicationVerifier")
+  coordApplication ProjectApplication[] @relation("ApplicationCoordinator")
 
   approvedApplications ProjectApplication[] @relation("ApplicationApprover")
 
@@ -137,10 +137,11 @@ model ProjectApplication {
   leaderId String
   leader   User   @relation("ApplicationLeader", fields: [leaderId], references: [id])
 
-  status ApplicationStatus @default(PENDING_COORDINATOR)
+  coordinatorId String
+  coordinator User @relation("ApplicationCoordinator",fields: [coordinatorId],references: [id])
 
-  verifiedById String?
-  verifiedBy   User?   @relation("ApplicationVerifier", fields: [verifiedById], references: [id])
+  status ApplicationStatus @default(PENDING_COORDINATOR)
+  isApproved Boolean @default(false)
 
   approvedById String?
   approvedBy   User?   @relation("ApplicationApprover", fields: [approvedById], references: [id])
