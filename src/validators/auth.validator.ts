@@ -38,3 +38,8 @@ export const registerSchema = z
   )
 
 export type RegisterInput = z.infer<typeof registerSchema>
+
+
+export const userIdParamSchema = z.object({
+  userId: z.string().uuid()
+})

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authorize } from "../../middlewares/rbac.middleware";
 import { validate } from "../../middlewares/zod.validator.middleware";
-import { createProjectSchema, updateProjectSchema } from "../../validators/project.validator";
+import { createProjectSchema, ProjectIdParamSchema, updateProjectSchema } from "../../validators/project.validator";
 import { projectController } from "./project.controller";
 import { Role } from "@prisma/client";
 import { asyncHandler } from "../../utils/async.handler";
@@ -15,14 +15,14 @@ router.use(authMiddleware);
 router.get(
     "/list-admin",
     authorize(Role.ADMIN),
-    asyncHandler( projectController.listProjectsAdmin)
+    asyncHandler(projectController.listProjectsAdmin)
 )
 
 
 // List Project stud,coor
 router.get(
     "/list",
-   asyncHandler( projectController.listProjects)
+    asyncHandler(projectController.listProjects)
 )
 
 
@@ -30,38 +30,46 @@ router.get(
 router.post(
     "/create",
     authorize("ADMIN"),
-    validate(createProjectSchema),
+    validate({ body: createProjectSchema }),
     asyncHandler(projectController.createProject)
 )
 
 
 // Update Project details + status Remark
 router.patch(
-    "/update/:id",
+    "/update/:projectId",
     authorize(Role.ADMIN),
-    validate(updateProjectSchema),
+    validate({
+        body: updateProjectSchema,
+        params: ProjectIdParamSchema
+    }),
     asyncHandler(projectController.updateProject)
 )
 
 // Toggle visibility of project + status Remark
 
 router.patch(
-    "/toggle-visibility/:id",
+    "/toggle-visibility/:projectId",
     authorize(Role.ADMIN),
+    validate({ params: ProjectIdParamSchema }),
     asyncHandler(projectController.toggleVisibility)
 )
 
 // get Project by Id admin
 
 router.get(
-    "/admin/:id",
+    "/admin/:projectId",
     authorize(Role.ADMIN),
+    validate({ params: ProjectIdParamSchema }),
+
     asyncHandler(projectController.getProjectByIdAdmin)
 )
 
 // get Project by id (visible only)
 router.get(
-    "/id",
+    "/:projectId",
+    validate({ params: ProjectIdParamSchema }),
+
     asyncHandler(projectController.listVisible)
 )
 

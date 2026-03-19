@@ -35,7 +35,7 @@ Params validation
 */
 
 export const applicationIdParamSchema = z.object({
-  id: z.string().uuid()
+  applicationId: z.string().uuid()
 })
 
 /*

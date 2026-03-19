@@ -6,14 +6,14 @@ import { CreateApplicationDTO, CreateApplicationServiceInput } from "./applicati
 
 export const applicationController = {
     async getApplicationById(req: Request, res: Response) {
-        const id = req.params.id as string;
+        const id = req.validated!.params!.applicationId;
         const result = await applicationService.getApplicationById(id);
 
         sendResponse(res, 200, result);
     },
     async createApplication(req: Request, res: Response) {
         const leaderId = req.userId as string;
-        const body: CreateApplicationDTO = req.body;
+        const body: CreateApplicationDTO = req.validated!.body;
 
         //adding leader to members 
         const members = body.members.some(m => m.userId === leaderId)
@@ -34,33 +34,33 @@ export const applicationController = {
 
     },
     async verifyApplication(req: Request, res: Response) {
-        const id = req.params.id as string;
+        const id = req.validated!.params!.applicationId;
         const result = applicationService.verifyApplication(id);
         sendResponse(res, 200, result, "Application Verified");
     },
     async approveApplication(req: Request, res: Response) {
         const userId = req.userId!;
-        const applicationId = req.params.id as string;
+        const applicationId = req.validated!.params!.applicationId;
 
         const result = applicationService.approveApplication(applicationId, userId);
 
         sendResponse(res, 200, result, "Application Approved");
     },
     async cancelApplication(req: Request, res: Response) {
-        const id = req.params.id as string;
+        const id = req.validated!.params!.applicationId;
         const userId = req.userId!
         const result = await applicationService.cancelApplication(id, userId);
 
         sendResponse(res, 200, result, "Application Canceled");
     },
     async rejectApplication(req: Request, res: Response) {
-        const id = req.params.id as string;
+        const id = req.validated!.params!.applicationId;
         const result = await applicationService.rejectApplication(id);
         sendResponse(res, 200, result, "Application Rejected");
     },
     async updateApplication(req:Request,res:Response){
-        const id = req.params.id as string
-        const dto = req.body
+        const id = req.validated!.params!.applicationId
+        const dto = req.validated!.body
         
         const result = await applicationService.updateApplication(id,dto);
 

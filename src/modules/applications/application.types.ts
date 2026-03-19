@@ -15,7 +15,13 @@ export interface CreateApplicationDTO {
     role: MemberRole
   }[]
 }
-
+/* 
+create app repo */
+export interface CreateApplicationOnly{
+  leaderId:string
+  projectId: string
+  coordinatorId: string
+}
 
 /*
 Cancel Application

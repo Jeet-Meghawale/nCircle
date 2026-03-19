@@ -11,6 +11,7 @@ const router = Router();
 // Post /auth/register
 router.post(
     "/register",
+    authMiddleware,
     authorize(Role.ADMIN),
     asyncHandler(authController.registerController)
 )

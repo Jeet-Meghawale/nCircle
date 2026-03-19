@@ -12,3 +12,9 @@ export const updateProjectSchema = z.object({
   visibility: z.enum(["LISTED", "UNLISTED"]).optional(),
   isActive: z.boolean().optional()
 });
+
+
+
+export const ProjectIdParamSchema = z.object({
+  projectId: z.string().uuid()
+})

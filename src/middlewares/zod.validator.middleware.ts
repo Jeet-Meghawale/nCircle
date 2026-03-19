@@ -2,18 +2,38 @@ import { Request, Response, NextFunction } from "express";
 import { ZodSchema } from "zod";
 
 export const validate =
-  (schema: ZodSchema) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (schema: {
+    body?: ZodSchema;
+    params?: ZodSchema;
+    query?: ZodSchema;
+  }) =>
+    (req: Request, res: Response, next: NextFunction) => {
 
-    const result = schema.safeParse(req.body);
+      req.validated = {};
 
-    if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        errors: result.error.flatten()
-      });
-    }
+      if (schema.body) {
+        const result = schema.body.safeParse(req.body);
+        if (!result.success) {
+          return res.status(400).json({ errors: result.error.flatten() });
+        }
+        req.validated.body = result.data;
+      }
 
-    req.body = result.data; 
-    next();
-  };
+      if (schema.params) {
+        const result = schema.params.safeParse(req.params);
+        if (!result.success) {
+          return res.status(400).json({ errors: result.error.flatten() });
+        }
+        req.validated.params = result.data;
+      }
+
+      if (schema.query) {
+        const result = schema.query.safeParse(req.query);
+        if (!result.success) {
+          return res.status(400).json({ errors: result.error.flatten() });
+        }
+        req.validated.query = result.data;
+      }
+
+      next();
+    };

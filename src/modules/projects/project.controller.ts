@@ -32,27 +32,27 @@ export const projectController = {
         sendResponse(res, 200, projects, "Admin Project List");
     },
     async getProjectByIdAdmin(req: Request, res: Response) {
-        const projectId = req.params.id as string;
+        const projectId = req.validated?.params?.id;
         const project = await projectService.getProject(projectId);
 
         sendResponse(res, 200, project)
     },
     async updateProject(req: Request, res: Response) {
-        const projectId = req.params.id as string;
-        const dto = req.body;
+        const projectId = req.validated?.params?.id;
+        const dto = req.validated?.body;
         const updatedProject = await projectService.updateProject(projectId, dto);
 
         sendResponse(res, 200, updatedProject, "Project Updated Successfully");
 
     },
     async toggleVisibility(req: Request, res: Response) {
-        const projectId = req.params.id as string;
+        const projectId = req.validated?.params?.id;
         const result = projectService.toggleVisibility(projectId);
 
         sendResponse(res, 200, result);
     },
     async listVisible(req: Request, res: Response) {
-        const projectId = req.params.id as string;
+        const projectId = req.validated?.params?.id;
         const result = projectService.listVisible(projectId);
 
         sendResponse(res, 200, result);

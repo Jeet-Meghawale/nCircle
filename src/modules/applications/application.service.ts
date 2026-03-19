@@ -11,7 +11,11 @@ export const applicationService = {
     },
     async createApplication(data: CreateApplicationServiceInput) {
         const { leaderId, coordinatorId, projectId, members } = data;
-
+        const create ={
+            leaderId,
+            coordinatorId,
+            projectId
+        }
         // remove duplicates
         const uniqueMembers = Array.from(
             new Map(members.map(m => [m.userId, m])).values()
@@ -26,28 +30,9 @@ export const applicationService = {
         if (finalMembers.length > 7) {
             throw new Error("Maximum 7 members allowed");
         }
-        // transaction (atomic operation)
-        return await prisma.$transaction(async (tx) => {
-            const application = await tx.projectApplication.create({
-                data: {
-                    projectId,
-                    leaderId,
-                    coordinatorId
-                }
-            });
-            await Promise.all(
-                finalMembers.map(member =>
-                    tx.applicationMember.create({
-                        data: {
-                            applicationId: application.id,
-                            userId: member.userId,
-                            role: member.role
-                        }
-                    })
-                )
-            )
-            return application;
-        });
+        
+        return await applicationRepository.createApplication(create,finalMembers);
+        
     },
     async verifyApplication(id: string) {
         const data = {
