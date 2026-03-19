@@ -5,7 +5,7 @@ import { applicationIdParamSchema, createApplicationSchema, UpdateApplicationDTO
 import { asyncHandler } from "../../utils/async.handler";
 import { applicationController } from "./application.controller";
 import { authorize } from "../../middlewares/rbac.middleware";
-import {  Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 const router = Router();
 
@@ -14,33 +14,33 @@ router.use(authMiddleware);
 router.get(
     "/:applicationId",
 
-    validate({params:applicationIdParamSchema}),
+    validate({ params: applicationIdParamSchema }),
     asyncHandler(applicationController.getApplicationById)
 ),
 
 
-// create application
-router.post(
-    "/create",
-    validate({body:createApplicationSchema}),
-    asyncHandler(applicationController.createApplication)
+    // create application
+    router.post(
+        "/create",
+        validate({ body: createApplicationSchema }),
+        asyncHandler(applicationController.createApplication)
 
-)
+    )
 
 //update application
-router.post(
+router.patch(
     "/update/:applicationId",
-    validate({params:applicationIdParamSchema}),
-    validate({body : UpdateApplicationDTO}),
-    authorize(Role.COORDINATOR,Role.ADMIN),
-    asyncHandler(applicationController.updateApplication)   
+    validate({ params: applicationIdParamSchema }),
+    validate({ body: UpdateApplicationDTO }),
+    authorize(Role.COORDINATOR, Role.ADMIN),
+    asyncHandler(applicationController.updateApplication)
 )
 
 //verify application
 router.patch(
     "/verify/:applicationId",
     authorize(Role.COORDINATOR),
-    validate({params:applicationIdParamSchema}),
+    validate({ params: applicationIdParamSchema }),
     asyncHandler(applicationController.verifyApplication)
 )
 
@@ -48,7 +48,7 @@ router.patch(
 router.patch(
     "/approve/:applicationId",
     authorize(Role.ADMIN),
-    validate({params:applicationIdParamSchema}),
+    validate({ params: applicationIdParamSchema }),
     asyncHandler(applicationController.approveApplication)
 )
 
@@ -56,7 +56,7 @@ router.patch(
 router.patch(
     "/cancel/:applicationId",
     authorize(Role.COORDINATOR, Role.STUDENT),
-    validate({params:applicationIdParamSchema}),
+    validate({ params: applicationIdParamSchema }),
     asyncHandler(applicationController.cancelApplication)
 )
 
@@ -64,7 +64,7 @@ router.patch(
 router.patch(
     "/reject/:applicationId",
     authorize(Role.ADMIN),
-    validate({params:applicationIdParamSchema}),
+    validate({ params: applicationIdParamSchema }),
     asyncHandler(applicationController.rejectApplication)
 )
 export default router;

@@ -9,7 +9,7 @@ export const validate =
   }) =>
     (req: Request, res: Response, next: NextFunction) => {
 
-      req.validated = {};
+      req.validated = req.validated || {};
 
       if (schema.body) {
         const result = schema.body.safeParse(req.body);
